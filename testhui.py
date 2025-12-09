@@ -1,26 +1,22 @@
 from huggingface_hub import InferenceClient
 import os
 
-# ================== CẤU HÌNH ==================
-# Khuyên dùng biến môi trường:
-# export HF_API_KEY="hf_xxx"
 HF_API_KEY = os.getenv("HF_API_KEY")
-
 MODEL_ID = "mistralai/Mistral-7B-Instruct-v0.3"
-# ==============================================
 
 if not HF_API_KEY:
-    print("❌ Chưa có HF_API_KEY (export HF_API_KEY trước)")
+    print("❌ Chưa có HF_API_KEY")
     exit(1)
 
 client = InferenceClient(
-    model=MODEL_ID,
     token=HF_API_KEY
 )
 
-print("🤗 HF Chat (InferenceClient – HF mới)")
+print("🤗 HF Chat (HF mới – conversational)")
 print("Gõ 'exit' để thoát")
 print("-" * 40)
+
+messages = []
 
 while True:
     user = input("👤 Bạn: ").strip()
@@ -28,14 +24,20 @@ while True:
         print("👋 Tạm biệt!")
         break
 
+    messages.append({"role": "user", "content": user})
+
     try:
-        reply = client.text_generation(
-            user,
-            max_new_tokens=256,
+        response = client.chat.completions.create(
+            model=MODEL_ID,
+            messages=messages,
+            max_tokens=256,
             temperature=0.7,
-            top_p=0.9,
         )
+
+        reply = response.choices[0].message["content"]
         print("🤖 AI:", reply)
+
+        messages.append({"role": "assistant", "content": reply})
 
     except Exception as e:
         print("❌ Lỗi:", str(e))
