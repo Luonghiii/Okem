@@ -3,7 +3,7 @@ import os
 import json
 
 # ====== CẤU HÌNH ======
-HF_API_KEY = os.getenv("HF_API_KEY") or "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"
+HF_API_KEY = os.getenv("HF_API_KEY") or "hf_"
 
 MODELS = {
     "1": "mistralai/Mistral-7B-Instruct-v0.3",
